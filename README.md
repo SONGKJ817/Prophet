@@ -1,0 +1,71 @@
+- prophet model hyperparameter(1)
+    - grid search를 통해 tuning이 가능한 hyperparameter
+        - changepoint_prior_scale
+            - 가장 영향력이 큼
+            - trand가 변하는 포인트에서 변화의 정도를 결정함
+            - L1 LASSO 규제를 사용
+            - 값이 너무 작을(클) 시 과소(과대)적합
+            - default : 0.005
+                - recommended tuning range : 0.001 ~ 0.5
+        - seasonality_prior_scale
+            - 계절적 변동에 대한 크기를 조정함
+            - L2 Ridge 규제를 사용
+            - 값이 너무 작을(클) 시 계절성의 크기가 작아(커)짐
+            - default : 10(규제가 적용이 되지 않음)
+                - recommended tuning range : 0.01 ~ 10
+        - holidays_prior_scale
+            - holiday에 대한 영향력을 결정함
+            - seasonality_prior_scale과 비슷
+            - default : 10(규제가 적용이 되지 않음)
+                - recommended tuning range : 0.01 ~ 10
+        - seasonality_mode
+            - additive 
+                - 트렌드. 계절성, 그리고 예측에 필요한 다른 영향들을 더함
+                - 상대적으로 일정한 계절적 변동이 있는 시계열 데이터에 사용이 적합
+            - multiplicative
+                - 트렌드. 계절성, 그리고 예측에 필요한 다른 영향들을 곱함
+                - 계절적 변동이 시간이 지남에 따라 감소하거나 증가하는 모델에 사용이 적합
+
+- prophet model hyperparameter(2)
+    - 도메인 지식이나 데이터 관찰로부터 tuning을 해야하는 hyperparameter
+        - changepoint_range
+            - 0에서 1 사이의 값을 가짐
+            - 과거 데이터의 트렌드 변화를 얼마나 따라갈 것인가를 결정
+            - default : 0.8(처음 80퍼센트의 데이터는 트렌드 변화를 따라가고, 20퍼센트의 데이터는 트렌드 변화를 따라가지 않음을 의미)
+        - growth
+            - default :linear
+                - logistic : 예측값의 범위가 주어져 있을 때 사용함
+       - changepoints
+           - changepoint를 직접 지정할 수 있는 hyperparameter
+           - default : None(모델이 트렌드를 기반으로 changepoint를 알아냄)
+               - 시계열 변화에 중요한 특정 시점을 알고 있을 때에는 추가되어야 함
+       - yearly_seasonality
+           - default : auto(2년 이상의 데이터가 있을 때 연 단위 계절성을 자동으로 고려함)
+               - True(2년 이상의 데이터가 없어도 연 단위 계절성을 고려함)
+               - False(일반적으로 사용하지 않음)
+       - weekly_seasonality, daily_seasonality
+           - yearly_seasonality와 같은 방식으로 다뤄짐
+       - holidays
+           - 특정 holiday나 특별한 events를 dataframe에서 가져옴
+           - holiday에 영향을 받는 날짜의 수를 조정할 수 있음
+           - 영향을 받는 정도는 holidays_prior_scale에 의해 결정됨
+
+- prophet model hyperparameter(3)
+    - 튜닝에 부적합한 hyperparameter
+        - n_checkpoints
+            - 트렌드에서 체크포인트(트렌드가 변하는 포인트)의 개수
+            - default : 25
+            - 이것을 조정하는 것보다 changepoint_prior_scale을 조정하는 것이 적합
+        - interval_width
+            - 예측에 대한 불확실구간을 설정함
+            - default : 0.8(yhat_upper과 yhat_lower이 80% 불확실구간 interval을 의미)
+            - 모델 예측에 영향을 미치지 않으므로, tuning할 필요가 없음
+        - uncertainty_samples
+            - 불확실구간 계산에 사용될 샘플의 개수
+            - default : 1000
+            - 모델 예측에 영향을 미치지 않으므로, tuning할 필요가 없음
+        - mcmc_samples
+            - default : 0
+            - 공식 문서에서 바꾸지 말라고 함
+        - stan_backend
+            - 모델 예측에 영향을 미치지 않으므로, tuning할 필요가 없음
